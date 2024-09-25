@@ -128,6 +128,7 @@ def update_graph_residuals(n):
     k_res = np.array([0])
     eps_res = np.array([0])
     T_res = np.array([0])
+    continuity_res = np.array([0])
 
     with open(log_file, 'r') as file:
         for line in file:
@@ -169,6 +170,11 @@ def update_graph_residuals(n):
                 var_aux = var_aux[11].split(',')
                 T_res = np.append(T_res, float(var_aux[0]))
 
+            if 'time step continuity errors' in line:
+                var_aux = line.split()
+                var_aux = var_aux[8].split(',')
+                continuity_res = np.append(continuity_res, float(var_aux[0]))
+
 
 
     it = np.arange(0, len(p_res), 1)
@@ -190,6 +196,8 @@ def update_graph_residuals(n):
         fig.add_trace(go.Scatter(x=it, y=eps_res, mode='lines', name='epsilon'))
     if len(T_res) > 1:
         fig.add_trace(go.Scatter(x=it, y=T_res, mode='lines', name='T'))
+    if len(continuity_res) > 1:
+        fig.add_trace(go.Scatter(x=it, y=continuity_res, mode='lines', name='continuity'))
 
     fig.update_layout(
         title={
