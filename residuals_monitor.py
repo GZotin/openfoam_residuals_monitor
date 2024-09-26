@@ -127,7 +127,7 @@ def update_graph_residuals(n):
     p_res = np.array([0])
     k_res = np.array([0])
     eps_res = np.array([0])
-    T_res = np.array([0])
+    e_res = np.array([0])
     continuity_res = np.array([0])
 
     with open(log_file, 'r') as file:
@@ -165,10 +165,10 @@ def update_graph_residuals(n):
                 var_aux = var_aux[11].split(',')
                 eps_res = np.append(eps_res, float(var_aux[0]))
             
-            if 'Solving for T' in line:
+            if 'Solving for e' in line:
                 var_aux = line.split()
                 var_aux = var_aux[11].split(',')
-                T_res = np.append(T_res, float(var_aux[0]))
+                e_res = np.append(e_res, float(var_aux[0]))
 
             if 'time step continuity errors' in line:
                 var_aux = line.split()
@@ -194,8 +194,8 @@ def update_graph_residuals(n):
         fig.add_trace(go.Scatter(x=it, y=k_res, mode='lines', name='k'))
     if len(eps_res) > 1:
         fig.add_trace(go.Scatter(x=it, y=eps_res, mode='lines', name='epsilon'))
-    if len(T_res) > 1:
-        fig.add_trace(go.Scatter(x=it, y=T_res, mode='lines', name='T'))
+    if len(e_res) > 1:
+        fig.add_trace(go.Scatter(x=it, y=e_res, mode='lines', name='e'))
     if len(continuity_res) > 1:
         fig.add_trace(go.Scatter(x=it, y=continuity_res, mode='lines', name='continuity'))
 
