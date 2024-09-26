@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 app = dash.Dash(__name__)
 stop_updates = False
 
-log_file = "E:/openfoam/tutorials/angledDuctExplicitFixedCoeff/log.rhoSimpleFoam"  # windows
+log_file = "./log.rhoSimpleFoam"  # windows
 
 # Layout of the Dash app
 app.layout = html.Div([
