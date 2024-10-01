@@ -1,0 +1,38 @@
+body {
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #333;
+    font-weight: bold;
+    padding: 1%;
+}
+
+p {
+    font-size: 1.2em;
+    color: #555;
+    margin: auto;
+    text-align: center;
+    padding-bottom: 1%;
+}
+
+.graph {
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    background-color: white;
+    width: 0.95;
+    height: 600px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+#sim_status {
+    transition: color 0.5s ease;
+}
+
+#sim_time {
+    transition: color 0.5s ease;
+}

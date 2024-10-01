@@ -3,67 +3,33 @@ import dash
 from dash import dcc, html
 from dash.dependencies import Output, Input
 import plotly.graph_objects as go
+import dash_bootstrap_components as dbc
 
 # Initializing the Dash app
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
 stop_updates = False
 
-log_file = "./log.rhoSimpleFoam"  # windows
+log_file = "./log.rhoSimpleFoam"
 
 # Layout of the Dash app
-app.layout = html.Div([
-    html.Header([
-        html.H1(
-            'Simulation Monitor',
-            style={
-                'textAlign': 'center',
-                'fontFamily': 'Arial',
-                'fontSize': '40px',
-                'color': 'black',
-                'fontWeight': 'bold'
-            }
-        ),
-        html.P(
-            'log file path = ' + log_file,
-            style={
-                'textAlign': 'left',
-                'fontFamily': 'Arial',
-                'fontSize': '20px',
-                'color': '#333333',
-                'fontWeight': 'normal'
-            }
-        ),
-        html.P(
-            id='sim_status',
-            children='Status: Not initialized',
-            style={
-                'textAlign': 'left',
-                'fontFamily': 'Arial',
-                'fontSize': '20px',
-                'color': 'red',  # Red for "Not initialized"
-                'fontWeight': 'normal'
-            }
-        ),
-        html.P(
-            id = 'sim_time',
-            children = 'Time: 0 s',
-            style={
-                'textAlign': 'left',
-                'fontFamily': 'Arial',
-                'fontSize': '20px',
-                'color': '#333333',
-                'fontWeight': 'normal'
-            }
-        )
+app.layout = dbc.Container([
+    dbc.Row([
+        dbc.Col(html.H1('Simulation Monitor', className='text-center')),
     ]),
-    dcc.Graph(id='residuals_graph'),
-    dcc.Graph(id='continuity_graph'),
-    dcc.Interval(
-        id='interval-component',
-        interval=1*1000,  # 1 second interval
-        n_intervals=0
-    )
-])
+    dbc.Row([
+        dbc.Col(html.P('Log file = ' + log_file)),
+        dbc.Col(html.P(id='sim_status', children='Status: Not initialized')),
+        dbc.Col(html.P(id='sim_time', children='Time: 0 s')),
+    ]),
+    dbc.Row([
+        dbc.Col(dcc.Graph(id='residuals_graph', className='graph')),
+    ]),
+    dbc.Row([
+        dbc.Col(dcc.Graph(id='continuity_graph', className='graph')),
+    ]),
+    dcc.Interval(id='interval-component', interval=1*1000, n_intervals=0)
+], fluid=True)
 
 # Callback to check the simulation status and change color
 @app.callback(
@@ -91,7 +57,7 @@ def update_status(n):
             sim_status = "Status: Ended"
             status_color = 'green'  # Green for "Ended"
 
-    return sim_status, {'textAlign': 'left', 'fontFamily': 'Arial', 'fontSize': '20px', 'color': status_color, 'fontWeight': 'normal'}
+    return sim_status, {'color': status_color}
 
 # Callback to update the simulation time
 @app.callback(
@@ -121,14 +87,14 @@ def update_graph_residuals(n):
     global stop_updates
     global log_file
 
-    Ux_res = np.array([0])
-    Uy_res = np.array([0])
-    Uz_res = np.array([0])
-    p_res = np.array([0])
-    k_res = np.array([0])
-    eps_res = np.array([0])
-    e_res = np.array([0])
-    continuity_res = np.array([0])
+    Ux_res = np.array([])
+    Uy_res = np.array([])
+    Uz_res = np.array([])
+    p_res = np.array([])
+    k_res = np.array([])
+    eps_res = np.array([])
+    e_res = np.array([])
+    continuity_res = np.array([])
 
     with open(log_file, 'r') as file:
         for line in file:
@@ -177,26 +143,26 @@ def update_graph_residuals(n):
 
 
 
-    it = np.arange(0, len(p_res), 1)
+    it = np.arange(1, len(p_res)+1, 1)
 
     fig = go.Figure()
 
     # Adding data to the graph
-    if len(Ux_res) > 1:
+    if len(Ux_res) > 0:
         fig.add_trace(go.Scatter(x=it, y=Ux_res, mode='lines', name='Ux'))
-    if len(Uy_res) > 1:
+    if len(Uy_res) > 0:
         fig.add_trace(go.Scatter(x=it, y=Uy_res, mode='lines', name='Uy'))
-    if len(Uz_res) > 1:
+    if len(Uz_res) > 0:
         fig.add_trace(go.Scatter(x=it, y=Uz_res, mode='lines', name='Uz'))
-    if len(p_res) > 1:
+    if len(p_res) > 0:
         fig.add_trace(go.Scatter(x=it, y=p_res, mode='lines', name='p'))
-    if len(k_res) > 1:
+    if len(k_res) > 0:
         fig.add_trace(go.Scatter(x=it, y=k_res, mode='lines', name='k'))
-    if len(eps_res) > 1:
+    if len(eps_res) > 0:
         fig.add_trace(go.Scatter(x=it, y=eps_res, mode='lines', name='epsilon'))
-    if len(e_res) > 1:
+    if len(e_res) > 0:
         fig.add_trace(go.Scatter(x=it, y=e_res, mode='lines', name='e'))
-    if len(continuity_res) > 1:
+    if len(continuity_res) > 0:
         fig.add_trace(go.Scatter(x=it, y=continuity_res, mode='lines', name='continuity'))
 
     fig.update_layout(
@@ -220,23 +186,19 @@ def update_graph_residuals(n):
                 'color': 'black'
             }
         },
-        yaxis_title={
-            'text': 'Residual',
-            'font':  {
-                'family': 'Arial',
-                'size': 18,
-                'color': 'black'
-            }
-        },
+        
         xaxis=dict(
+            title = 'Iteration',
             linecolor='black',
             linewidth=2,
             ticks='outside',
             ticklen=8,
             tickwidth=2,
-            tickcolor='black'
+            tickcolor='black',
+            gridcolor='lightgray'
         ),
         yaxis=dict(
+            title = 'Residual',
             linecolor='black',
             linewidth=2,
             ticks='outside',
@@ -244,7 +206,12 @@ def update_graph_residuals(n):
             tickwidth=2,
             tickcolor='black',
             exponentformat='e',
-        )
+            gridcolor='lightgray'
+        ),
+        plot_bgcolor='rgba(249, 249, 249, 1)',
+        paper_bgcolor='rgba(255, 255, 255, 1)',
+        font=dict(family='Arial', size=12, color='black'),
+        hovermode='closest'
     )
     fig.update_yaxes(type='log')
     return fig, stop_updates
@@ -256,9 +223,9 @@ def update_graph_residuals(n):
 def update_graph_continuity(n):
     global log_file
 
-    continuity_sum_local = np.array([0])
-    continuity_global = np.array([0])
-    continuity_cumulative = np.array([0])
+    continuity_sum_local = np.array([])
+    continuity_global = np.array([])
+    continuity_cumulative = np.array([])
 
     with open(log_file, 'r') as file:
         for line in file:
@@ -272,16 +239,16 @@ def update_graph_continuity(n):
                 continuity_cumulative = np.append(continuity_cumulative, float(var_aux3[0]))
 
 
-    it = np.arange(0, len(continuity_global), 1)
+    it = np.arange(1, len(continuity_global)+1, 1)
 
     fig = go.Figure()
 
     # Adding data to the graph
-    if len(continuity_sum_local) > 1:
+    if len(continuity_sum_local) > 0:
         fig.add_trace(go.Scatter(x=it, y=continuity_sum_local, mode='lines', name='continuity sum local'))
-    if len(continuity_global) > 1:
+    if len(continuity_global) > 0:
         fig.add_trace(go.Scatter(x=it, y=continuity_global, mode='lines', name='continuity global'))
-    if len(continuity_cumulative) > 1:
+    if len(continuity_cumulative) > 0:
         fig.add_trace(go.Scatter(x=it, y=continuity_cumulative, mode='lines', name='continuity cumulative'))
 
     fig.update_layout(
@@ -319,7 +286,8 @@ def update_graph_continuity(n):
             ticks='outside',
             ticklen=8,
             tickwidth=2,
-            tickcolor='black'
+            tickcolor='black',
+            gridcolor='lightgray'
         ),
         yaxis=dict(
             linecolor='black',
@@ -329,7 +297,12 @@ def update_graph_continuity(n):
             tickwidth=2,
             tickcolor='black',
             exponentformat='e',
-        )
+            gridcolor='lightgray'
+        ),
+        plot_bgcolor='rgba(249, 249, 249, 1)',
+        paper_bgcolor='rgba(255, 255, 255, 1)',
+        font=dict(family='Arial', size=12, color='black'),
+        hovermode='closest'
     )
     return fig
 
