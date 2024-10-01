@@ -135,37 +135,37 @@ def update_graph_residuals(n):
             if 'End' in line:
                 stop_updates = True
 
-            if 'Solving for Ux' in line:
+            if 'Solving for Ux,' in line:
                 var_aux = line.split()
                 var_aux = var_aux[11].split(',')
                 Ux_res = np.append(Ux_res, float(var_aux[0]))
 
-            if 'Solving for Uy' in line:
+            if 'Solving for Uy,' in line:
                 var_aux = line.split()
                 var_aux = var_aux[11].split(',')
                 Uy_res = np.append(Uy_res, float(var_aux[0]))
 
-            if 'Solving for Uz' in line:
+            if 'Solving for Uz,' in line:
                 var_aux = line.split()
                 var_aux = var_aux[11].split(',')
                 Uz_res = np.append(Uz_res, float(var_aux[0]))
 
-            if 'Solving for p' in line:
+            if 'Solving for p,' in line:
                 var_aux = line.split()
                 var_aux = var_aux[11].split(',')
                 p_res = np.append(p_res, float(var_aux[0]))
 
-            if 'Solving for k' in line:
+            if 'Solving for k,' in line:
                 var_aux = line.split()
                 var_aux = var_aux[11].split(',')
                 k_res = np.append(k_res, float(var_aux[0]))
             
-            if 'Solving for epsilon' in line:
+            if 'Solving for epsilon,' in line:
                 var_aux = line.split()
                 var_aux = var_aux[11].split(',')
                 eps_res = np.append(eps_res, float(var_aux[0]))
             
-            if 'Solving for e' in line:
+            if 'Solving for e,' in line:
                 var_aux = line.split()
                 var_aux = var_aux[11].split(',')
                 e_res = np.append(e_res, float(var_aux[0]))
