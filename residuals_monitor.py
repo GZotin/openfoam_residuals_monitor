@@ -186,9 +186,15 @@ def update_graph_residuals(n):
                 'color': 'black'
             }
         },
-        
+        yaxis_title={
+            'text': 'Residual',
+            'font':  {
+                'family': 'Arial',
+                'size': 18,
+                'color': 'black'
+            }
+        },
         xaxis=dict(
-            title = 'Iteration',
             linecolor='black',
             linewidth=2,
             ticks='outside',
@@ -198,7 +204,6 @@ def update_graph_residuals(n):
             gridcolor='lightgray'
         ),
         yaxis=dict(
-            title = 'Residual',
             linecolor='black',
             linewidth=2,
             ticks='outside',
