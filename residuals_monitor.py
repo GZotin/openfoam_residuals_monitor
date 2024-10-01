@@ -314,4 +314,4 @@ def update_graph_continuity(n):
 
 # Start the Dash server
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8080)
+    app.run_server(debug=False, port=8080)
